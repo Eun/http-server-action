@@ -63,9 +63,9 @@ if (config.server.noCache === null || config.server.noCache.length == 0) {
     config.server.noCache = config.server.noCache === 'true';
 }
 
-config.server.contentType = core.getInput('content-types');
-if (config.server.contentType === null || config.server.contentType.length == 0) {
-    config.server.contentType = {
+config.contentType = core.getInput('content-types');
+if (config.contentType === null || config.contentType.length == 0) {
+    config.contentType = {
         appcache: 'text/cache-manifest',
         css: 'text/css',
         gif: 'image/gif',
@@ -80,7 +80,7 @@ if (config.server.contentType === null || config.server.contentType.length == 0)
         xml: 'text/xml'
     };
 } else {
-    config.server.contentType = JSON.parse(config.server.contentType);
+    config.contentType = JSON.parse(config.contentType);
 }
 
 
