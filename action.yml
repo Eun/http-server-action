@@ -15,7 +15,7 @@ inputs:
     required: false
     default: '8080'
   no-cache:
-    description: 'Whether to turn of the cache or not'
+    description: 'Whether to set the Cache-Control header or not'
     required: false
     default: false
   content-type:
