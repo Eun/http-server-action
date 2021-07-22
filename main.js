@@ -60,7 +60,7 @@ if (config.server.noCache === null || config.server.noCache.length == 0) {
     config.server.noCache = config.server.noCache === 'true';
 }
 
-config.server.contentType = core.getInput('content-type');
+config.server.contentType = core.getInput('content-types');
 if (config.server.contentType === null || config.server.contentType.length == 0) {
     config.server.contentType = {
         appcache: 'text/cache-manifest',
