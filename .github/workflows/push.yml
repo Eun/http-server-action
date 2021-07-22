@@ -17,7 +17,7 @@ jobs:
         name: Serve Files
         uses: ./
         with:
-          directory: .github
+          directory: ${{ env.GITHUB_WORKSPACE }}/.github
           port: 9090
           no-cache: true
           content-types: |
