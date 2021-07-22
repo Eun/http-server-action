@@ -111,7 +111,9 @@ child.on('message', (msg) => {
         case 'ready':
             core.debug(`master: server ready at ${msg.pid}`);
             core.debug(`master: starting server with ${JSON.stringify(config, null, 2)}`);
-            child.send(config);
+            child.send({
+                config: config,
+            });
             break;
         case 'serving':
             core.saveState('pid', msg.pid);
