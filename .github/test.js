@@ -4,7 +4,7 @@ const process = require('process');
 
 const options = {
     hostname: 'localhost',
-    port: 8000,
+    port: 9090,
     path: '/PULL_REQUEST_TEMPLATE.md',
     method: 'GET'
 };
@@ -43,6 +43,8 @@ const req = http.request(options, res => {
 
 req.on('error', error => {
     console.error(error);
+    process.exit(1);
+    return;
 });
 
 req.end();
