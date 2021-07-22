@@ -68,9 +68,13 @@ function deploy(config, ready) {
                 requestedFile += path.sep;
             }
             response.writeHead(200, 'OK', { 'Content-Type': 'text/html' });
+            if (request.method === 'HEAD') {
+                response.end();
+                return;
+            }
             response.write('<pre>\n');
 
-            let parentDir = path.resolve(path.normalize(path.join(requestedFile, "..")));
+            let parentDir = path.resolve(path.normalize(path.join(requestedFile, '..')));
             if (!parentDir.endsWith(path.sep)) {
                 parentDir += path.sep;
             }
@@ -101,6 +105,10 @@ function deploy(config, ready) {
             headers['Content-Type'] = contentType;
         }
         response.writeHead(200, 'OK', headers);
+        if (request.method === 'HEAD') {
+            response.end();
+            return;
+        }
 
         var readStream = fs.createReadStream(requestedFile);
         readStream.pipe(response);

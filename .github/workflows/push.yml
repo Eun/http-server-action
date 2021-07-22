@@ -13,6 +13,8 @@ jobs:
       -
         name: Checkout code
         uses: actions/checkout@v2
+      - 
+        uses: actions/setup-node@v2
       -
         name: Serve Files
         uses: ./
@@ -25,7 +27,7 @@ jobs:
               "md": "text/markdown"
             }
       -
-        run: curl -vvvv http://localhost:9090/PULL_REQUEST_TEMPLATE.md
+        run: node .github/test.js
 
   # draft your next release notes as pull requests are merged into "master"
   # the configuration is at /.github/release-drafter.yml.
