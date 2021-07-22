@@ -25,7 +25,7 @@ jobs:
               "md": "text/markdown"
             }
       -
-        run: curl -vvvv --fail-with-body http://localhost:9090/PULL_REQUEST_TEMPLATE.md
+        run: curl -vvvv http://localhost:9090/PULL_REQUEST_TEMPLATE.md
 
   # draft your next release notes as pull requests are merged into "master"
   # the configuration is at /.github/release-drafter.yml.
