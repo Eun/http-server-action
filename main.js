@@ -84,7 +84,7 @@ if (config.contentType === null || config.contentType.length == 0) {
 
 
 const cp = require('child_process');
-const child = cp.fork(__filename, ['serve'], {detached: true, silent: true});
+const child = cp.fork(__filename, ['serve'], { detached: true, silent: true });
 child.on('error', (err) => {
     core.error(`Error: unable to spawn server: ${err}`);
     process.exit(1);
@@ -131,7 +131,7 @@ setTimeout(() => {
         child.kill();
         process.exit(1);
         return;
-    } catch(e) {
+    } catch (e) {
         // process is dead
         core.error(`Error: server is dead`);
         process.exit(1);
