@@ -27,9 +27,12 @@ const core = require('@actions/core');
 
 let config = {
     verbose: false,
+    root: null,
+    port: null,
     server: {
-        noCache: false,
-    }
+        noCache: null,
+    },
+    contentType: null,
 };
 
 
@@ -42,42 +45,42 @@ config.port = core.getInput('port');
 if (config.port === null || config.port.length == 0) {
     config.port = 8080;
 } else {
-    switch (typeof(config.port)) {
-        case 'string':
-            const parsed = Number.parseInt(config.port);
-            if (Number.isNaN(parsed)) {
-                core.error(`Error: unable to parse input port "${config.port}"`);
-                return;
-            }
-            config.port = parsed;
-            break;
-        case 'number':
-            break;
-        default:
-            core.error(`Error: input port was not a string or number, it was a ${typeof(config.port)}`);
-            process.exit(1);
-            return;
+    const parsed = Number.parseInt(config.port);
+    if (Number.isNaN(parsed)) {
+        core.error(`Error: unable to parse input port "${config.port}"`);
+        return;
     }
+    config.port = parsed;
 }
 
 config.server.noCache = core.getInput('no-cache');
 if (config.server.noCache === null || config.server.noCache.length == 0) {
     config.server.noCache = false;
 } else {
-    switch (typeof(config.server.noCache)) {
-        case 'string':
-            config.server.noCache = config.server.noCache === 'true';
-            break;
-        case 'boolean':
-            break;
-        default:
-            core.error(`Error: input no-cache was not a string or boolean, it was a ${typeof(config.port)}`);
-            process.exit(1);
-            return;
-    }
+    config.server.noCache = config.server.noCache === 'true';
 }
 
-console.log(core.getInput('content-type'))
+config.server.contentType = core.getInput('content-type');
+if (config.server.contentType === null || config.server.contentType.length == 0) {
+    config.server.contentType = {
+        appcache: 'text/cache-manifest',
+        css: 'text/css',
+        gif: 'image/gif',
+        html: 'text/html',
+        ico: 'image/x-icon',
+        jpeg: 'image/jpeg',
+        jpg: 'image/jpeg',
+        js: 'text/javascript',
+        json: 'application/json',
+        png: 'image/png',
+        txt: 'text/plain',
+        xml: 'text/xml'
+    };
+} else {
+    config.server.contentType = JSON.parse(config.server.contentType);
+}
+
+
 
 const cp = require('child_process');
 const child = cp.fork(__filename, ['serve'], {detached: true});
