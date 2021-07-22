@@ -25,7 +25,7 @@ const req = http.request(options, res => {
         return;
     }
     
-    if (res.headers['content-length'] !== buf.length) {
+    if (res.headers['content-length'] !== buf.length.toString()) {
         console.error(`expected ${buf.length}, got ${res.headers['content-length']}`);
         process.exit(1);
         return;
