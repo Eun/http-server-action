@@ -1,4 +1,5 @@
 const process = require('process');
+const core = require('@actions/core');
 const server = require('node-http-server');
 
 if (process.argv.length === 3 && process.argv[2] === 'serve') {
@@ -26,7 +27,6 @@ if (process.argv.length === 3 && process.argv[2] === 'serve') {
 }
 
 
-const core = require('@actions/core');
 
 let config = {
     verbose: false,
