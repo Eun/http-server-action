@@ -19,7 +19,7 @@ setTimeout(() => {
         process.kill(pid, 0);
         // process is still alive
         process.kill(pid, 'SIGINT');
-    } catch(e) {
+    } catch (e) {
         // process is already dead
     }
 }, 100);

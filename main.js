@@ -1,6 +1,7 @@
 const process = require('process');
 const core = require('@actions/core');
-const server = require('node-http-server');
+const server = require('./server.js');
+
 
 if (process.argv.length === 3 && process.argv[2] === 'serve') {
     process.on('SIGTERM', () => {
@@ -29,13 +30,10 @@ if (process.argv.length === 3 && process.argv[2] === 'serve') {
 
 
 let config = {
-    verbose: false,
     root: null,
     port: null,
-    server: {
-        noCache: null,
-    },
-    contentType: null,
+    noCache: null,
+    contentTypes: null,
 };
 
 
@@ -56,16 +54,16 @@ if (config.port === null || config.port.length == 0) {
     config.port = parsed;
 }
 
-config.server.noCache = core.getInput('no-cache');
-if (config.server.noCache === null || config.server.noCache.length == 0) {
-    config.server.noCache = false;
+config.noCache = core.getInput('no-cache');
+if (config.noCache === null || config.noCache.length == 0) {
+    config.noCache = false;
 } else {
-    config.server.noCache = config.server.noCache === 'true';
+    config.noCache = config.noCache === 'true';
 }
 
-config.contentType = core.getInput('content-types');
-if (config.contentType === null || config.contentType.length == 0) {
-    config.contentType = {
+config.contentTypes = core.getInput('content-types');
+if (config.contentTypes === null || config.contentTypes.length == 0) {
+    config.contentTypes = {
         appcache: 'text/cache-manifest',
         css: 'text/css',
         gif: 'image/gif',
@@ -80,13 +78,13 @@ if (config.contentType === null || config.contentType.length == 0) {
         xml: 'text/xml'
     };
 } else {
-    config.contentType = JSON.parse(config.contentType);
+    config.contentTypes = JSON.parse(config.contentTypes);
 }
 
 
 
 const cp = require('child_process');
-const child = cp.fork(__filename, ['serve'], {detached: true, silent: true});
+const child = cp.fork(__filename, ['serve'], { detached: true, silent: true });
 child.on('error', (err) => {
     core.error(`Error: unable to spawn server: ${err}`);
     process.exit(1);
@@ -133,7 +131,7 @@ setTimeout(() => {
         child.kill();
         process.exit(1);
         return;
-    } catch(e) {
+    } catch (e) {
         // process is dead
         core.error(`Error: server is dead`);
         process.exit(1);
