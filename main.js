@@ -33,7 +33,7 @@ let config = {
     root: null,
     port: null,
     noCache: null,
-    contentType: null,
+    contentTypes: null,
 };
 
 
@@ -54,16 +54,16 @@ if (config.port === null || config.port.length == 0) {
     config.port = parsed;
 }
 
-config.server.noCache = core.getInput('no-cache');
-if (config.server.noCache === null || config.server.noCache.length == 0) {
-    config.server.noCache = false;
+config.noCache = core.getInput('no-cache');
+if (config.noCache === null || config.noCache.length == 0) {
+    config.noCache = false;
 } else {
-    config.server.noCache = config.server.noCache === 'true';
+    config.noCache = config.noCache === 'true';
 }
 
-config.contentType = core.getInput('content-types');
-if (config.contentType === null || config.contentType.length == 0) {
-    config.contentType = {
+config.contentTypes = core.getInput('content-types');
+if (config.contentTypes === null || config.contentTypes.length == 0) {
+    config.contentTypes = {
         appcache: 'text/cache-manifest',
         css: 'text/css',
         gif: 'image/gif',
@@ -78,7 +78,7 @@ if (config.contentType === null || config.contentType.length == 0) {
         xml: 'text/xml'
     };
 } else {
-    config.contentType = JSON.parse(config.contentType);
+    config.contentTypes = JSON.parse(config.contentTypes);
 }
 
 
