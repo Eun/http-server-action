@@ -14,6 +14,28 @@ inputs:
     description: 'Port to serve on'
     required: false
     default: '8080'
+  no-cache:
+    description: 'Whether to set the Cache-Control header or not'
+    required: false
+    default: false
+  content-types:
+    description: 'Content Types to serve'
+    required: false
+    default: |
+      {
+        "appcache": "text/cache-manifest",
+        "css": "text/css",
+        "gif": "image/gif",
+        "html": "text/html",
+        "ico": "image/x-icon",
+        "jpeg": "image/jpeg",
+        "jpg": "image/jpeg",
+        "js": "text/javascript",
+        "json": "application/json",
+        "png": "image/png",
+        "txt": "text/plain",
+        "xml": "text/xml"
+      }
 runs:
   using: 'node12'
   main: 'main.js'
