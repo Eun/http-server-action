@@ -1,0 +1,12 @@
+{
+  "name": "http-server-action",
+  "version": "1.0.0",
+  "description": "GitHub Action to start a http server that serves files",
+  "main": "index.js",
+  "author": "Tobias Salzmann",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.4.0",
+    "node-http-server": "^8.1.4"
+  }
+}

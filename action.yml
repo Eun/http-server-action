@@ -1,0 +1,20 @@
+# https://help.github.com/en/articles/metadata-syntax-for-github-actions
+name: 'HTTP Server'
+description: 'GitHub Action to start a http server that serves files'
+author: 'Tobias Salzmann'
+branding:
+  icon: 'server'
+  color: 'blue'
+inputs:
+  directory:
+    description: 'Directory to serve'
+    required: false
+    default: '.'
+  port:
+    description: 'Port to serve on'
+    required: false
+    default: '8080'
+runs:
+  using: 'node12'
+  main: 'main.js'
+  post: 'post.js'
