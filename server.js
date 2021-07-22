@@ -102,7 +102,7 @@ function deploy(config, ready) {
         }
 
         if (config.contentTypes[contentType]) {
-            headers['Content-Type'] = contentType;
+            headers['Content-Type'] = config.contentTypes[contentType];
         }
         response.writeHead(200, 'OK', headers);
         if (request.method === 'HEAD') {

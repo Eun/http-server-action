@@ -24,6 +24,13 @@ const req = http.request(options, res => {
         process.exit(1);
         return;
     }
+    
+    if (res.headers['content-length'] !== buf.length) {
+        console.error(`expected ${buf.length}, got ${res.headers['content-length']}`);
+        process.exit(1);
+        return;
+    }
+
 
 
     let allTheData = "";
