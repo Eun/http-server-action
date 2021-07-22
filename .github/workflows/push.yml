@@ -4,6 +4,21 @@ on:
 
 name: "push"
 jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v2
+      -
+        name: Serve Files
+        uses: ./
+      -
+        run: curl -vvvv http://localhost:8080/README.md
+
   # draft your next release notes as pull requests are merged into "master"
   # the configuration is at /.github/release-drafter.yml.
   update_release_draft:
