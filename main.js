@@ -1,78 +1,117 @@
 const process = require('process');
+const server = require('node-http-server');
 
-if (process.argv.length === 5 && process.argv[2] === 'serve') {
-    const server = require('node-http-server');
-
-    let config = new server.Config;
-    config.verbose = false;
-    config.port = Number.parseInt(process.argv[3]);
-    config.root = process.argv[4];
-
-    server.deploy(config, () => {
-        process.send({
-            pid: process.pid,
-        });
-    });
-
+if (process.argv.length === 3 && process.argv[2] === 'serve') {
     process.on('SIGTERM', () => {
         process.exit(0);
     });
 
+    process.on('message', (msg) => {
+        server.deploy(msg.config, () => {
+            process.send({
+                state: 'serving',
+                pid: process.pid,
+            });
+        });
+    })
+
+    process.send({
+        state: 'ready',
+        pid: process.pid,
+    });
     return;
 }
 
 
 const core = require('@actions/core');
 
-let directory = core.getInput('directory');
-if (directory === null || directory.length == 0) {
-    directory = '.';
+let config = {
+    verbose: false,
+    server: {
+        noCache: false,
+    }
+};
+
+
+config.root = core.getInput('directory');
+if (config.root === null || config.root.length == 0) {
+    config.root = '.';
 }
 
-let port = core.getInput('port');
-if (port === null || port.length == 0) {
-    port = 8080;
+config.port = core.getInput('port');
+if (config.port === null || config.port.length == 0) {
+    config.port = 8080;
 } else {
-    switch (typeof(port)) {
+    switch (typeof(config.port)) {
         case 'string':
-            const parsed = Number.parseInt(port);
+            const parsed = Number.parseInt(config.port);
             if (Number.isNaN(parsed)) {
-                core.error(`Error: unable to parse input port "${port}"`);
+                core.error(`Error: unable to parse input port "${config.port}"`);
                 return;
             }
-            port = parsed;
+            config.port = parsed;
             break;
         case 'number':
             break;
         default:
-            core.error(`Error: input port was not a string or number, it was a ${typeof(port)}`);
+            core.error(`Error: input port was not a string or number, it was a ${typeof(config.port)}`);
             process.exit(1);
             return;
     }
 }
 
+config.server.noCache = core.getInput('no-cache');
+if (config.server.noCache === null || config.server.noCache.length == 0) {
+    config.server.noCache = false;
+} else {
+    switch (typeof(config.server.noCache)) {
+        case 'string':
+            config.server.noCache = config.server.noCache === 'true';
+            break;
+        case 'boolean':
+            break;
+        default:
+            core.error(`Error: input no-cache was not a string or boolean, it was a ${typeof(config.port)}`);
+            process.exit(1);
+            return;
+    }
+}
+
+console.log(core.getInput('content-type'))
+
 const cp = require('child_process');
-const child = cp.fork(__filename, ['serve', port, directory], {detached: true});
+const child = cp.fork(__filename, ['serve'], {detached: true});
 child.on('error', (err) => {
     core.error(`Error: unable to spawn server: ${err}`);
+    process.exit(1);
+    return;
 });
 child.on('message', (msg) => {
-    if (msg.pid === undefined || msg.pid === null) {
+    if (msg.state === undefined || msg.state === null || msg.pid === undefined || msg.pid === null) {
         core.error(`Error: invalid message`);
         child.kill();
         process.exit(1);
         return;
     }
+
     if (msg.pid != child.pid) {
         core.error(`Error: expected pid ${child.pid}, but got ${msg.pid}`);
         child.kill();
         process.exit(1);
         return;
     }
-    core.saveState('pid', msg.pid);
-    core.info('server running');
-    core.debug(`server running at ${msg.pid}`);
-    process.exit(0);
+
+    switch (msg.state) {
+        case 'ready':
+            core.debug(`server ready at ${msg.pid}`);
+            child.send(config);
+            break;
+        case 'serving':
+            core.saveState('pid', msg.pid);
+            core.info('server running');
+            process.exit(0);
+            break;
+    }
     return;
 });
 
