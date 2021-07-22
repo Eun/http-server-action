@@ -1,6 +1,7 @@
 const process = require('process');
 const core = require('@actions/core');
-const server = require('node-http-server');
+const server = require('./server.js');
+
 
 if (process.argv.length === 3 && process.argv[2] === 'serve') {
     process.on('SIGTERM', () => {
@@ -29,12 +30,9 @@ if (process.argv.length === 3 && process.argv[2] === 'serve') {
 
 
 let config = {
-    verbose: false,
     root: null,
     port: null,
-    server: {
-        noCache: null,
-    },
+    noCache: null,
     contentType: null,
 };
 
