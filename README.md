@@ -42,7 +42,7 @@ steps:
     name: Serve Files
     uses: Eun/http-server-action@v1
     with:
-      directory: '.'
+      directory: ${{ github.workspace }}
       port: 8080
       no-cache: false
       content-types: |
