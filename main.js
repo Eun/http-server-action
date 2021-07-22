@@ -7,7 +7,9 @@ if (process.argv.length === 3 && process.argv[2] === 'serve') {
     });
 
     process.on('message', (msg) => {
+        core.debug(`starting server with ${JSON.stringify(msg.config, null, 2)}`);
         server.deploy(msg.config, () => {
+            core.debug(`server started`);
             process.send({
                 state: 'serving',
                 pid: process.pid,
@@ -15,6 +17,7 @@ if (process.argv.length === 3 && process.argv[2] === 'serve') {
         });
     })
 
+    core.debug('server is ready');
     process.send({
         state: 'ready',
         pid: process.pid,
@@ -107,6 +110,7 @@ child.on('message', (msg) => {
     switch (msg.state) {
         case 'ready':
             core.debug(`server ready at ${msg.pid}`);
+            core.debug(`starting server with ${JSON.stringify(msg.config, null, 2)}`);
             child.send(config);
             break;
         case 'serving':
