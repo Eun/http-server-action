@@ -44,9 +44,8 @@ function deploy(config, ready) {
             response.end();
             return;
         }
-
-        let requestedFile = path.resolve(path.normalize(path.join(cwd, ...request.url.split(path.posix.sep))));
-
+        const url = new URL(request.url, `http://${request.headers.host}`);
+        let requestedFile = path.resolve(path.normalize(path.join(cwd, ...url.pathname.split(path.posix.sep))));
         if (requestedFile !== root) {
             if (!requestedFile.startsWith(cwd)) {
                 response.writeHead(404, 'Not found');
