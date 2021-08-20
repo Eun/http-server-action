@@ -6,6 +6,6 @@
   "author": "Tobias Salzmann",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.4.0"
+    "@actions/core": "^1.5.0"
   }
 }
