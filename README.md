@@ -18,6 +18,9 @@ No-Cache determiantes wheter the server sets the Cache-Control header or not (de
 ### `check-index`
 If true, look for index.html instead of false, show directory listing (default is `false`) (*optional*)
 
+### `only-get-or-head`
+Throw HTTP-Error 405 on other methods than GET or HEAD (default is `true`) (*optional*)
+
 ### `content-types`
 A JSON object of content-types that should be served (*optional*)
 Default:

@@ -19,6 +19,9 @@ function deploy(config, ready) {
     if (config.checkIndex === undefined || config.checkIndex === null) {
         config.checkIndex = false;
     }
+    if (config.onlyGetOrHead === undefined || config.onlyGetOrHead === null) {
+        config.onlyGetOrHead = true;
+    }
     if (config.contentTypes === undefined || config.contentTypes === null || config.contentTypes.length == 0) {
         config.contentTypes = {};
     }
@@ -42,7 +45,7 @@ function deploy(config, ready) {
             );
         }
 
-        if (request.method !== 'GET' && request.method !== 'HEAD') {
+        if (config.onlyGetOrHead && (request.method !== 'GET' && request.method !== 'HEAD')) {
             response.writeHead(405, 'Method Not Allowed');
             response.end();
             return;

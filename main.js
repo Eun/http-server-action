@@ -34,6 +34,7 @@ let config = {
     port: null,
     noCache: null,
 	checkIndex: null,
+	onlyGetOrHead: null,
     contentTypes: null,
 };
 
@@ -67,6 +68,13 @@ if (config.checkIndex === null || config.checkIndex.length == 0) {
     config.checkIndex = false;
 } else {
     config.checkIndex = config.checkIndex === 'true';
+}
+
+config.onlyGetOrHead = core.getInput('only-get-or-head');
+if (config.onlyGetOrHead === null || config.onlyGetOrHead.length == 0) {
+    config.onlyGetOrHead = true;
+} else {
+    config.onlyGetOrHead = config.onlyGetOrHead === 'true';
 }
 
 config.contentTypes = core.getInput('content-types');

@@ -22,6 +22,10 @@ inputs:
     description: 'Whether to look for index.html or show directory listing'
     required: false
     default: false
+  only-get-or-head:
+    description: 'Whether to throw 405 on other methods than GET or HEAD'
+    required: false
+    default: true
   content-types:
     description: 'Content Types to serve'
     required: false
