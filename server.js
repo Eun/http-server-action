@@ -16,7 +16,7 @@ function deploy(config, ready) {
     if (config.noCache === undefined || config.noCache === null) {
         config.noCache = false;
     }
-	if (config.checkIndex === undefined || config.checkIndex === null) {
+    if (config.checkIndex === undefined || config.checkIndex === null) {
         config.checkIndex = false;
     }
     if (config.contentTypes === undefined || config.contentTypes === null || config.contentTypes.length == 0) {
@@ -63,13 +63,20 @@ function deploy(config, ready) {
             }
         }
 
-        const stat = fs.statSync(requestedFile);
+        let stat = fs.statSync(requestedFile);
 
         if (stat.isDirectory()) {
 			let indexFound = false;
 			if (config.checkIndex) {
-				if(fs.existsSync(requestedFile + '/index.html')){
-					requestedFile = requestedFile + '/index.html';
+				let indexFile = '';
+				if (requestedFile.endsWith(path.sep)) {
+					indexFile = requestedFile + 'index.html';
+				} else {
+					indexFile = requestedFile + path.sep + 'index.html';
+				}
+				if(fs.existsSync(indexFile)){
+					requestedFile = indexFile;
+					stat = fs.statSync(requestedFile);
 					indexFound = true;
 				}
 			}

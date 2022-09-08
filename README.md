@@ -1,7 +1,9 @@
 # http-server-action
 ---
-An action that spawns an http server to serve files. By @Eun
-Improved to handle index.html in root of directories.
+An action that spawns an http server to serve files. 
+This project is forked from https://github.com/Eun/http-server-action
+
+Changes: Improved to handle index.html in root of directories.
 
 ## Inputs
 ### `directory`
@@ -49,7 +51,7 @@ steps:
       directory: ${{ github.workspace }}
       port: 8080
       no-cache: false
-	  check-index: false
+      check-index: false
       content-types: |
         {
           "appcache": "text/cache-manifest",
