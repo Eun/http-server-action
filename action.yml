@@ -18,6 +18,10 @@ inputs:
     description: 'Whether to set the Cache-Control header or not'
     required: false
     default: false
+  check-index:
+    description: 'Whether to look for index.html or show directory listing'
+    required: false
+    default: false
   content-types:
     description: 'Content Types to serve'
     required: false

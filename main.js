@@ -33,6 +33,7 @@ let config = {
     root: null,
     port: null,
     noCache: null,
+	checkIndex: null,
     contentTypes: null,
 };
 
@@ -59,6 +60,13 @@ if (config.noCache === null || config.noCache.length == 0) {
     config.noCache = false;
 } else {
     config.noCache = config.noCache === 'true';
+}
+
+config.checkIndex = core.getInput('check-index');
+if (config.checkIndex === null || config.checkIndex.length == 0) {
+    config.checkIndex = false;
+} else {
+    config.checkIndex = config.checkIndex === 'true';
 }
 
 config.contentTypes = core.getInput('content-types');

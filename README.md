@@ -1,6 +1,7 @@
 # http-server-action
 ---
-An action that spawns an http server to serve files.
+An action that spawns an http server to serve files. By @Eun
+Improved to handle index.html in root of directories.
 
 ## Inputs
 ### `directory`
@@ -11,6 +12,9 @@ Port that should be used (default is `8080`) (*optional*)
 
 ### `no-cache`
 No-Cache determiantes wheter the server sets the Cache-Control header or not (default is `false`) (*optional*)
+
+### `check-index`
+If true, look for index.html instead of false, show directory listing (default is `false`) (*optional*)
 
 ### `content-types`
 A JSON object of content-types that should be served (*optional*)
@@ -45,6 +49,7 @@ steps:
       directory: ${{ github.workspace }}
       port: 8080
       no-cache: false
+	  check-index: false
       content-types: |
         {
           "appcache": "text/cache-manifest",
