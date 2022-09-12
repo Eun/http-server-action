@@ -18,14 +18,16 @@ inputs:
     description: 'Whether to set the Cache-Control header or not'
     required: false
     default: false
-  check-index:
-    description: 'Whether to look for index.html or show directory listing'
+  index-files:
+    description: 'If set and directory is requested, look for those files, instead of show directory listing'
     required: false
-    default: false
-  only-get-or-head:
-    description: 'Whether to throw 405 on other methods than GET or HEAD'
+    default: |
+      []
+  allowed-methods:
+    description: 'Throw HTTP-Error 405 on other methods than the methods given'
     required: false
-    default: true
+    default: |
+      ["GET", "HEAD"]
   content-types:
     description: 'Content Types to serve'
     required: false

@@ -3,7 +3,6 @@ const path = require('path');
 const process = require('process');
 const fs = require('fs');
 
-
 function deploy(config, ready) {
     const server = http.createServer();
 
@@ -16,11 +15,11 @@ function deploy(config, ready) {
     if (config.noCache === undefined || config.noCache === null) {
         config.noCache = false;
     }
-    if (config.checkIndex === undefined || config.checkIndex === null) {
-        config.checkIndex = false;
+    if (config.IndexFiles === undefined || config.IndexFiles === null) {
+        config.IndexFiles = [];
     }
-    if (config.onlyGetOrHead === undefined || config.onlyGetOrHead === null) {
-        config.onlyGetOrHead = true;
+    if (config.allowedMethods === undefined || config.allowedMethods === null) {
+        config.allowedMethods = ['GET', 'HEAD'];
     }
     if (config.contentTypes === undefined || config.contentTypes === null || config.contentTypes.length == 0) {
         config.contentTypes = {};
@@ -45,7 +44,7 @@ function deploy(config, ready) {
             );
         }
 
-        if (config.onlyGetOrHead && (request.method !== 'GET' && request.method !== 'HEAD')) {
+        if (!config.allowedMethods.includes(request.method)) {
             response.writeHead(405, 'Method Not Allowed');
             response.end();
             return;
@@ -69,28 +68,24 @@ function deploy(config, ready) {
         let stat = fs.statSync(requestedFile);
 
         if (stat.isDirectory()) {
+			if (!requestedFile.endsWith(path.sep)) {
+				requestedFile += path.sep;
+			}
 			let indexFound = false;
-			if (config.checkIndex) {
-				let indexFile = '';
-				if (requestedFile.endsWith(path.sep)) {
-					indexFile = requestedFile + 'index.html';
-				} else {
-					indexFile = requestedFile + path.sep + 'index.html';
-				}
+			config.IndexFiles.every(elem => {
+				let indexFile = requestedFile + 'index.html';
 				if(fs.existsSync(indexFile)){
 					requestedFile = indexFile;
 					stat = fs.statSync(requestedFile);
 					indexFound = true;
+					return false;
 				}
-			}
+				return true;
+			});
+
 			if(!indexFound) {
 				response.writeHead(200, 'OK', { 'Content-Type': 'text/html' });
-				if (config.checkIndex) {
-					response.write('<pre>NO_INDEX.HTML_FOUND</pre>');
-				}
-				if (!requestedFile.endsWith(path.sep)) {
-					requestedFile += path.sep;
-				}
+
 				if (request.method === 'HEAD') {
 					response.end();
 					return;

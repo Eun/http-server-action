@@ -27,15 +27,13 @@ if (process.argv.length === 3 && process.argv[2] === 'serve') {
     return;
 }
 
-
-
 let config = {
     root: null,
     port: null,
     noCache: null,
-	checkIndex: null,
-	onlyGetOrHead: null,
-    contentTypes: null,
+	IndexFiles: null,
+	allowedMethods: null,
+    contentTypes: null
 };
 
 
@@ -63,18 +61,11 @@ if (config.noCache === null || config.noCache.length == 0) {
     config.noCache = config.noCache === 'true';
 }
 
-config.checkIndex = core.getInput('check-index');
-if (config.checkIndex === null || config.checkIndex.length == 0) {
-    config.checkIndex = false;
+config.IndexFiles = core.getInput('index-files');
+if (config.IndexFiles === null || config.IndexFiles.length == 0) {
+    config.IndexFiles = [];
 } else {
-    config.checkIndex = config.checkIndex === 'true';
-}
-
-config.onlyGetOrHead = core.getInput('only-get-or-head');
-if (config.onlyGetOrHead === null || config.onlyGetOrHead.length == 0) {
-    config.onlyGetOrHead = true;
-} else {
-    config.onlyGetOrHead = config.onlyGetOrHead === 'true';
+    config.IndexFiles = JSON.parse(config.IndexFiles);
 }
 
 config.contentTypes = core.getInput('content-types');
@@ -97,7 +88,12 @@ if (config.contentTypes === null || config.contentTypes.length == 0) {
     config.contentTypes = JSON.parse(config.contentTypes);
 }
 
-
+config.allowedMethods = core.getInput('allowed-methods');
+if (config.allowedMethods === null || config.allowedMethods.length == 0) {
+    config.allowedMethods = ['GET', 'HEAD'];
+} else {
+    config.allowedMethods = JSON.parse(config.allowedMethods);
+}
 
 const cp = require('child_process');
 const child = cp.fork(__filename, ['serve'], { detached: true, silent: true });
