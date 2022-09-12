@@ -2,7 +2,6 @@ const process = require('process');
 const core = require('@actions/core');
 const server = require('./server.js');
 
-
 if (process.argv.length === 3 && process.argv[2] === 'serve') {
     process.on('SIGTERM', () => {
         process.exit(0);
@@ -35,7 +34,6 @@ let config = {
 	allowedMethods: null,
     contentTypes: null
 };
-
 
 config.root = core.getInput('directory');
 if (config.root === null || config.root.length == 0) {

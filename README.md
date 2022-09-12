@@ -16,10 +16,10 @@ Port that should be used (default is `8080`) (*optional*)
 No-Cache determiantes wheter the server sets the Cache-Control header or not (default is `false`) (*optional*)
 
 ### `index-files`
-If set and directory is requested, look for those files, instead of show directory listing (default is EMPTY, sample is `[index.html, index.htm]`) (*optional*)
+If set and directory is requested, look for those files, instead of show directory listing (default is EMPTY, sample is `["index.html", "index.htm"]`) (*optional*)
 
 ### `allowed-methods`
-Throw HTTP-Error 405 on other methods than the methods given (default is `[GET, HEAD]`) (*optional*)
+Throw HTTP-Error 405 on other methods than the methods given (default is `["GET", "HEAD"]`) (*optional*)
 
 ### `content-types`
 A JSON object of content-types that should be served (*optional*)
@@ -54,8 +54,10 @@ steps:
       directory: ${{ github.workspace }}
       port: 8080
       no-cache: false
-      index-files: [index.html, index.htm]
-	  allowed-methods: [GET, HEAD]
+      index-files: |
+        ["index.html", "index.htm"]
+	  allowed-methods: |
+        ["GET", "HEAD"]
       content-types: |
         {
           "appcache": "text/cache-manifest",

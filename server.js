@@ -31,7 +31,6 @@ function deploy(config, ready) {
         cwd += path.sep;
     }
 
-
     function toPosixPath(url) {
         return path.posix.join(...url.split(path.sep));
     }
@@ -137,6 +136,5 @@ function deploy(config, ready) {
         ready(server);
     });
 }
-
 
 exports.deploy = deploy;
