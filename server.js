@@ -15,8 +15,8 @@ function deploy(config, ready) {
     if (config.noCache === undefined || config.noCache === null) {
         config.noCache = false;
     }
-    if (config.IndexFiles === undefined || config.IndexFiles === null) {
-        config.IndexFiles = [];
+    if (config.indexFiles === undefined || config.indexFiles === null) {
+        config.indexFiles = [];
     }
     if (config.allowedMethods === undefined || config.allowedMethods === null) {
         config.allowedMethods = ['GET', 'HEAD'];
