@@ -53,7 +53,7 @@ steps:
       no-cache: false
       index-files: |
         ["index.html", "index.htm"]
-	  allowed-methods: |
+      allowed-methods: |
         ["GET", "HEAD"]
       content-types: |
         {
