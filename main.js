@@ -30,8 +30,8 @@ let config = {
     root: null,
     port: null,
     noCache: null,
-	IndexFiles: null,
-	allowedMethods: null,
+    indexFiles: null,
+    allowedMethods: null,
     contentTypes: null
 };
 
