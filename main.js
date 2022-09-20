@@ -59,11 +59,11 @@ if (config.noCache === null || config.noCache.length == 0) {
     config.noCache = config.noCache === 'true';
 }
 
-config.IndexFiles = core.getInput('index-files');
-if (config.IndexFiles === null || config.IndexFiles.length == 0) {
-    config.IndexFiles = [];
+config.indexFiles = core.getInput('index-files');
+if (config.indexFiles === null || config.indexFiles.length == 0) {
+    config.indexFiles = [];
 } else {
-    config.IndexFiles = JSON.parse(config.IndexFiles);
+    config.indexFiles = JSON.parse(config.indexFiles);
 }
 
 config.contentTypes = core.getInput('content-types');
