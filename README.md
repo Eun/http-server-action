@@ -1,9 +1,6 @@
 # http-server-action
 ---
 An action that spawns an http server to serve files. 
-This project is forked from https://github.com/Eun/http-server-action
-
-Changes: Improved to handle index.html in root of directories.
 
 ## Inputs
 ### `directory`
