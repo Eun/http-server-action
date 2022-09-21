@@ -3,7 +3,6 @@ const path = require('path');
 const process = require('process');
 const fs = require('fs');
 
-
 function deploy(config, ready) {
     const server = http.createServer();
 
@@ -16,6 +15,12 @@ function deploy(config, ready) {
     if (config.noCache === undefined || config.noCache === null) {
         config.noCache = false;
     }
+    if (config.indexFiles === undefined || config.indexFiles === null) {
+        config.indexFiles = [];
+    }
+    if (config.allowedMethods === undefined || config.allowedMethods === null) {
+        config.allowedMethods = ['GET', 'HEAD'];
+    }
     if (config.contentTypes === undefined || config.contentTypes === null || config.contentTypes.length == 0) {
         config.contentTypes = {};
     }
@@ -25,7 +30,6 @@ function deploy(config, ready) {
     if (!root.endsWith(path.sep)) {
         cwd += path.sep;
     }
-
 
     function toPosixPath(url) {
         return path.posix.join(...url.split(path.sep));
@@ -39,7 +43,7 @@ function deploy(config, ready) {
             );
         }
 
-        if (request.method !== 'GET' && request.method !== 'HEAD') {
+        if (!config.allowedMethods.includes(request.method)) {
             response.writeHead(405, 'Method Not Allowed');
             response.end();
             return;
@@ -60,38 +64,51 @@ function deploy(config, ready) {
             }
         }
 
-        const stat = fs.statSync(requestedFile);
+        let stat = fs.statSync(requestedFile);
 
         if (stat.isDirectory()) {
-            if (!requestedFile.endsWith(path.sep)) {
-                requestedFile += path.sep;
-            }
-            response.writeHead(200, 'OK', { 'Content-Type': 'text/html' });
-            if (request.method === 'HEAD') {
-                response.end();
-                return;
-            }
-            response.write('<pre>\n');
+	if (!requestedFile.endsWith(path.sep)) {
+		requestedFile += path.sep;
+	}
+	const noIndexFound = config.indexFiles.every(elem => {
+		const indexFile = requestedFile + elem;
+		if(fs.existsSync(indexFile)){
+			requestedFile = indexFile;
+			stat = fs.statSync(requestedFile);
+			return false;
+		}
+		return true;
+	});
 
-            let parentDir = path.resolve(path.normalize(path.join(requestedFile, '..')));
-            if (!parentDir.endsWith(path.sep)) {
-                parentDir += path.sep;
-            }
-            if (parentDir.startsWith(cwd)) {
-                let parentLink = '/' + toPosixPath(parentDir.slice(cwd.length));
-                if (parentLink === '/.') {
-                    parentLink = '/';
-                }
-                response.write(`<a href="${parentLink}">..</a>\n`);
-            }
+	if(noIndexFound) {
+		response.writeHead(200, 'OK', { 'Content-Type': 'text/html' });
 
-            for (const file of fs.readdirSync(requestedFile)) {
-                const fullPath = requestedFile + file;
-                response.write(`<a href="/${toPosixPath(fullPath.slice(cwd.length))}">${file}</a>\n`);
-            }
-            response.write('</pre>');
-            response.end();
-            return;
+		if (request.method === 'HEAD') {
+			response.end();
+			return;
+		}
+		response.write('<pre>\n');
+
+		let parentDir = path.resolve(path.normalize(path.join(requestedFile, '..')));
+		if (!parentDir.endsWith(path.sep)) {
+			parentDir += path.sep;
+		}
+		if (parentDir.startsWith(cwd)) {
+			let parentLink = '/' + toPosixPath(parentDir.slice(cwd.length));
+			if (parentLink === '/.') {
+				parentLink = '/';
+			}
+			response.write(`<a href="${parentLink}">..</a>\n`);
+		}
+
+		for (const file of fs.readdirSync(requestedFile)) {
+			const fullPath = requestedFile + file;
+			response.write(`<a href="/${toPosixPath(fullPath.slice(cwd.length))}">${file}</a>\n`);
+		}
+		response.write('</pre>');
+		response.end();
+		return;
+	}
         }
 
         const contentType = path.extname(requestedFile).slice(1);
@@ -117,6 +134,5 @@ function deploy(config, ready) {
         ready(server);
     });
 }
-
 
 exports.deploy = deploy;
