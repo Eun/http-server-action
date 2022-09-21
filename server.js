@@ -44,22 +44,34 @@ function deploy(config, ready) {
         }
 
         if (!config.allowedMethods.includes(request.method)) {
-            response.writeHead(405, 'Method Not Allowed');
-            response.end();
+            const body = 'Method Not Allowed';
+            response.writeHead(405, {
+                'Content-Length': Buffer.byteLength(body),
+                'Content-Type': 'text/plain'
+            });
+            response.end(body);
             return;
         }
         const url = new URL(request.url, `http://${request.headers.host}`);
         let requestedFile = path.resolve(path.normalize(path.join(cwd, ...url.pathname.split(path.posix.sep))));
         if (requestedFile !== root) {
             if (!requestedFile.startsWith(cwd)) {
-                response.writeHead(404, 'Not found');
-                response.end();
+                const body = 'Not Found';
+                response.writeHead(404, {
+                    'Content-Length': Buffer.byteLength(body),
+                    'Content-Type': 'text/plain'
+                });
+                response.end(body);
                 return;
             }
 
             if (!fs.existsSync(requestedFile)) {
-                response.writeHead(404, 'Not found');
-                response.end();
+                const body = 'Not Found';
+                response.writeHead(404, {
+                    'Content-Length': Buffer.byteLength(body),
+                    'Content-Type': 'text/plain'
+                });
+                response.end(body);
                 return;
             }
         }
@@ -81,7 +93,9 @@ function deploy(config, ready) {
             });
 
             if(noIndexFound) {
-                response.writeHead(200, 'OK', { 'Content-Type': 'text/html' });
+                response.writeHead(200, {
+                    'Content-Type': 'text/html'
+                });
 
                 if (request.method === 'HEAD') {
                     response.end();
@@ -120,7 +134,7 @@ function deploy(config, ready) {
         if (config.contentTypes[contentType]) {
             headers['Content-Type'] = config.contentTypes[contentType];
         }
-        response.writeHead(200, 'OK', headers);
+        response.writeHead(200, headers);
         if (request.method === 'HEAD') {
             response.end();
             return;
