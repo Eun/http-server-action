@@ -19,12 +19,6 @@ const req = http.request(options, res => {
         return;
     }
 
-    if (res.headers['content-type'] !== 'text/markdown') {
-        console.error(`expected test/markdown, got ${res.headers['content-type']}`);
-        process.exit(1);
-        return;
-    }
-    
     if (res.headers['content-length'] !== buf.length.toString()) {
         console.error(`expected ${buf.length}, got ${res.headers['content-length']}`);
         process.exit(1);
