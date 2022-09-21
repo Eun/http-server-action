@@ -67,48 +67,48 @@ function deploy(config, ready) {
         let stat = fs.statSync(requestedFile);
 
         if (stat.isDirectory()) {
-	if (!requestedFile.endsWith(path.sep)) {
-		requestedFile += path.sep;
-	}
-	const noIndexFound = config.indexFiles.every(elem => {
-		const indexFile = requestedFile + elem;
-		if(fs.existsSync(indexFile)){
-			requestedFile = indexFile;
-			stat = fs.statSync(requestedFile);
-			return false;
-		}
-		return true;
-	});
+            if (!requestedFile.endsWith(path.sep)) {
+                requestedFile += path.sep;
+            }
+            const noIndexFound = config.indexFiles.every(elem => {
+                const indexFile = requestedFile + elem;
+                if(fs.existsSync(indexFile)){
+                    requestedFile = indexFile;
+                    stat = fs.statSync(requestedFile);
+                    return false;
+                }
+                return true;
+            });
 
-	if(noIndexFound) {
-		response.writeHead(200, 'OK', { 'Content-Type': 'text/html' });
+            if(noIndexFound) {
+                response.writeHead(200, 'OK', { 'Content-Type': 'text/html' });
 
-		if (request.method === 'HEAD') {
-			response.end();
-			return;
-		}
-		response.write('<pre>\n');
+                if (request.method === 'HEAD') {
+                    response.end();
+                    return;
+                }
+                response.write('<pre>\n');
 
-		let parentDir = path.resolve(path.normalize(path.join(requestedFile, '..')));
-		if (!parentDir.endsWith(path.sep)) {
-			parentDir += path.sep;
-		}
-		if (parentDir.startsWith(cwd)) {
-			let parentLink = '/' + toPosixPath(parentDir.slice(cwd.length));
-			if (parentLink === '/.') {
-				parentLink = '/';
-			}
-			response.write(`<a href="${parentLink}">..</a>\n`);
-		}
+                let parentDir = path.resolve(path.normalize(path.join(requestedFile, '..')));
+                if (!parentDir.endsWith(path.sep)) {
+                    parentDir += path.sep;
+                }
+                if (parentDir.startsWith(cwd)) {
+                    let parentLink = '/' + toPosixPath(parentDir.slice(cwd.length));
+                    if (parentLink === '/.') {
+                        parentLink = '/';
+                    }
+                    response.write(`<a href="${parentLink}">..</a>\n`);
+                }
 
-		for (const file of fs.readdirSync(requestedFile)) {
-			const fullPath = requestedFile + file;
-			response.write(`<a href="/${toPosixPath(fullPath.slice(cwd.length))}">${file}</a>\n`);
-		}
-		response.write('</pre>');
-		response.end();
-		return;
-	}
+                for (const file of fs.readdirSync(requestedFile)) {
+                    const fullPath = requestedFile + file;
+                    response.write(`<a href="/${toPosixPath(fullPath.slice(cwd.length))}">${file}</a>\n`);
+                }
+                response.write('</pre>');
+                response.end();
+                return;
+            }
         }
 
         const contentType = path.extname(requestedFile).slice(1);
