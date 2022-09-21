@@ -4,7 +4,7 @@ on:
 
 name: "push"
 jobs:
-  test:
+  test-default:
     strategy:
       matrix:
         os: [ macos-latest, ubuntu-latest, windows-latest ]
@@ -27,7 +27,53 @@ jobs:
               "md": "text/markdown"
             }
       -
-        run: node .github/test.js
+        run: node .github/test-default.js
+
+  test-index-files:
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v3
+      -
+        uses: actions/setup-node@v3
+      -
+        name: Serve Files
+        uses: ./
+        with:
+          directory: ${{ github.workspace }}/.github
+          port: 9090
+          no-cache: true
+          index-files: |
+            ["PULL_REQUEST_TEMPLATE.md"]
+      -
+        run: node .github/test-index-files.js
+
+  test-allowed-methods:
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v3
+      -
+        uses: actions/setup-node@v3
+      -
+        name: Serve Files
+        uses: ./
+        with:
+          directory: ${{ github.workspace }}/.github
+          port: 9090
+          no-cache: true
+          allowed-methods: |
+            ["POST"]
+      -
+        run: node .github/test-allowed-methods.js
 
   # draft your next release notes as pull requests are merged into "master"
   # the configuration is at /.github/release-drafter.yml.

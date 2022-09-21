@@ -2,7 +2,6 @@ const process = require('process');
 const core = require('@actions/core');
 const server = require('./server.js');
 
-
 if (process.argv.length === 3 && process.argv[2] === 'serve') {
     process.on('SIGTERM', () => {
         process.exit(0);
@@ -27,15 +26,14 @@ if (process.argv.length === 3 && process.argv[2] === 'serve') {
     return;
 }
 
-
-
 let config = {
     root: null,
     port: null,
     noCache: null,
-    contentTypes: null,
+    indexFiles: null,
+    allowedMethods: null,
+    contentTypes: null
 };
-
 
 config.root = core.getInput('directory');
 if (config.root === null || config.root.length == 0) {
@@ -61,6 +59,13 @@ if (config.noCache === null || config.noCache.length == 0) {
     config.noCache = config.noCache === 'true';
 }
 
+config.indexFiles = core.getInput('index-files');
+if (config.indexFiles === null || config.indexFiles.length == 0) {
+    config.indexFiles = [];
+} else {
+    config.indexFiles = JSON.parse(config.indexFiles);
+}
+
 config.contentTypes = core.getInput('content-types');
 if (config.contentTypes === null || config.contentTypes.length == 0) {
     config.contentTypes = {
@@ -81,7 +86,12 @@ if (config.contentTypes === null || config.contentTypes.length == 0) {
     config.contentTypes = JSON.parse(config.contentTypes);
 }
 
-
+config.allowedMethods = core.getInput('allowed-methods');
+if (config.allowedMethods === null || config.allowedMethods.length == 0) {
+    config.allowedMethods = ['GET', 'HEAD'];
+} else {
+    config.allowedMethods = JSON.parse(config.allowedMethods);
+}
 
 const cp = require('child_process');
 const child = cp.fork(__filename, ['serve'], { detached: true, silent: true });
