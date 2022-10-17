@@ -1,5 +1,5 @@
 # https://help.github.com/en/articles/metadata-syntax-for-github-actions
-name: 'HTTP Server Action (16-mod)'
+name: 'HTTP Server Action'
 description: 'GitHub Action to start a http server that serves files'
 author: 'Tobias Salzmann'
 branding:
