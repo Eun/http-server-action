@@ -46,7 +46,7 @@ steps:
     uses: actions/checkout@v2
   -
     name: Serve Files
-    uses: Eun/http-server-action@v1
+    uses: Eun/http-server-action@v1.0.6
     with:
       directory: ${{ github.workspace }}
       port: 8080
