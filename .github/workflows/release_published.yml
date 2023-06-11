@@ -1,0 +1,28 @@
+# this workflow runs when a release was published.
+on:
+  release:
+    types: [published]
+
+name: "release_published"
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v3
+      -
+        name: Inject slug/short variables
+        uses: rlespinasse/github-slug-action@v4
+      -
+        name: Tag
+        run: |
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git tag $(echo ${{env.GITHUB_REF_SLUG}} | cut -d. -f1)
+      -
+        name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
