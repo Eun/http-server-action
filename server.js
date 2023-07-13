@@ -35,7 +35,24 @@ function deploy(config, ready) {
         return path.posix.join(...url.split(path.sep));
     }
 
+    let logger = fs.createWriteStream('log.txt', {
+        flags: 'a'
+    });
+    let writeLine = (line) => logger.write(`\n${line}`);
+
     server.on('request', (request, response) => {
+        let now = new Date().toLocaleTimeString();
+        let data = '';
+
+        request.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        request.on('end', () => {
+            writeLine(`[${now}] ${request.method} ${request.url} ${JSON.stringify(data)}`);
+        })
+
+
         if (config.noCache) {
             response.setHeader(
                 'Cache-Control',
@@ -84,7 +101,7 @@ function deploy(config, ready) {
             }
             const noIndexFound = config.indexFiles.every(elem => {
                 const indexFile = requestedFile + elem;
-                if(fs.existsSync(indexFile)){
+                if (fs.existsSync(indexFile)) {
                     requestedFile = indexFile;
                     stat = fs.statSync(requestedFile);
                     return false;
@@ -92,7 +109,7 @@ function deploy(config, ready) {
                 return true;
             });
 
-            if(noIndexFound) {
+            if (noIndexFound) {
                 response.writeHead(200, {
                     'Content-Type': 'text/html'
                 });

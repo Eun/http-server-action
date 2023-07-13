@@ -71,5 +71,7 @@ steps:
           "xml": "text/xml"
         }
   -
-    run: curl -vvvv http://localhost:8080/index.html
+    run: |
+      curl -vvvv http://localhost:8080/index.html
+      cat log.txt
 ```

@@ -27,7 +27,9 @@ jobs:
               "md": "text/markdown"
             }
       -
-        run: node .github/test-default.js
+        run: |
+          node .github/test-default.js
+          cat log.txt
 
   test-index-files:
     strategy:
@@ -50,7 +52,9 @@ jobs:
           index-files: |
             ["PULL_REQUEST_TEMPLATE.md"]
       -
-        run: node .github/test-index-files.js
+        run: |
+          node .github/test-index-files.js
+          cat log.txt
 
   test-allowed-methods:
     strategy:
@@ -73,7 +77,9 @@ jobs:
           allowed-methods: |
             ["POST"]
       -
-        run: node .github/test-allowed-methods.js
+        run: |
+          node .github/test-allowed-methods.js
+          cat log.txt
 
   # draft your next release notes as pull requests are merged into "master"
   # the configuration is at /.github/release-drafter.yml.
