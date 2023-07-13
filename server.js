@@ -41,7 +41,7 @@ function deploy(config, ready) {
     let writeLine = (line) => logger.write(`\n${line}`);
 
     server.on('request', (request, response) => {
-        let now = new Date().toLocaleTimeString();
+        let now = new Date().toLocaleTimeString('en-US', {  hour: "2-digit", minute: "2-digit", hour12: false })
         let data = '';
 
         request.on('data', (chunk) => {
