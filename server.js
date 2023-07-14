@@ -40,7 +40,7 @@ function deploy(config, ready) {
     }
     
     let writeLine = (line) => {
-        if (config.log != "off") {
+        if (config.log !== "off") {
             let txtLogger = fs.createWriteStream(config.log, {
                 flags: 'a'
             });
