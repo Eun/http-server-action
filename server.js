@@ -5,6 +5,7 @@ const fs = require('fs');
 
 function deploy(config, ready) {
     const server = http.createServer();
+    const formatTime = Intl.DateTimeFormat('en-US', { hour: "2-digit", minute: "2-digit", second:"2-digit", hour12: false })
 
     if (config.root === undefined || config.root === null || config.root.length == 0) {
         config.root = process.cwd();
@@ -24,6 +25,9 @@ function deploy(config, ready) {
     if (config.contentTypes === undefined || config.contentTypes === null || config.contentTypes.length == 0) {
         config.contentTypes = {};
     }
+    if (config.log == undefined || config.log == null) {
+        config.log = "off";
+    }
 
     const root = path.resolve(path.normalize(config.root));
     let cwd = root;
@@ -34,14 +38,24 @@ function deploy(config, ready) {
     function toPosixPath(url) {
         return path.posix.join(...url.split(path.sep));
     }
-
-    let logger = fs.createWriteStream('log.txt', {
-        flags: 'a'
-    });
-    let writeLine = (line) => logger.write(`\n${line}`);
+    
+    let writeLine = (line) => {
+        if (config.log != "off") {
+            let path = config.log;
+            // ensure .txt file extension is available
+            if (!path.endsWith(".txt")) {
+                path += ".txt";
+            }
+            let txtLogger = fs.createWriteStream(path, {
+                flags: 'a'
+            });
+            
+            txtLogger.write(`\n${line}`);
+        }
+    };
 
     server.on('request', (request, response) => {
-        let now = new Date().toLocaleTimeString('en-US', {  hour: "2-digit", minute: "2-digit", hour12: false })
+        let now = formatTime.format(new Date());
         let data = '';
 
         request.on('data', (chunk) => {
@@ -50,7 +64,7 @@ function deploy(config, ready) {
 
         request.on('end', () => {
             writeLine(`[${now}] ${request.method} ${request.url} ${JSON.stringify(data)}`);
-        })
+        });
 
 
         if (config.noCache) {
