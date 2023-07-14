@@ -26,7 +26,10 @@ function deploy(config, ready) {
         config.contentTypes = {};
     }
     if (config.log == undefined || config.log == null) {
-        config.log = "off";
+        config.log = "";
+    }
+	if (config.logTime == undefined || config.logTime == null) {
+        config.logTime = true;
     }
 
     const root = path.resolve(path.normalize(config.root));
@@ -40,27 +43,26 @@ function deploy(config, ready) {
     }
     
     let writeLine = (line) => {
-        if (config.log !== "off") {
-            let txtLogger = fs.createWriteStream(config.log, {
-                flags: 'a'
-            });
-            
-            txtLogger.write(`\n${line}`);
-        }
+		let txtLogger = fs.createWriteStream(config.log, {
+			flags: 'a'
+		});
+		
+		txtLogger.write(`\n${line}`);
     };
 
-    server.on('request', (request, response) => {
-        let now = formatTime.format(new Date());
-        let data = '';
+    server.on('request', (request, response) => {	
+        if (config.log !== "") {
+			let now = config.logTime ? `[${formatTime.format(new Date())}] ` : '';
+			let data = '';
 
-        request.on('data', (chunk) => {
-            data += chunk;
-        });
+			request.on('data', (chunk) => {
+				data += chunk;
+			});
 
-        request.on('end', () => {
-            writeLine(`[${now}] ${request.method} ${request.url} ${JSON.stringify(data)}`);
-        });
-
+			request.on('end', () => {
+				writeLine(`${now}${request.method} ${request.url} ${JSON.stringify(data)}`);
+			});
+        }
 
         if (config.noCache) {
             response.setHeader(

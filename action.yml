@@ -49,7 +49,11 @@ inputs:
   log:
     description: 'Create a log file with given name'
     required: false
-    default: 'off'
+    default: ''
+  logTime:
+    description: 'Whether to include the time of access in the log file or not'
+    required: false
+    default: true
 runs:
   using: 'node16'
   main: 'main.js'
