@@ -94,7 +94,7 @@ if (config.allowedMethods === null || config.allowedMethods.length == 0) {
     config.allowedMethods = JSON.parse(config.allowedMethods);
 }
 
-config.log = core.getInput(config.log);
+config.log = core.getInput("log");
 
 const cp = require('child_process');
 const child = cp.fork(__filename, ['serve'], { detached: true, silent: true });
