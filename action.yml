@@ -46,6 +46,10 @@ inputs:
         "txt": "text/plain",
         "xml": "text/xml"
       }
+  log:
+    description: 'Create a log file with given name'
+    required: false
+    default: 'off'
 runs:
   using: 'node16'
   main: 'main.js'

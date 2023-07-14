@@ -32,7 +32,8 @@ let config = {
     noCache: null,
     indexFiles: null,
     allowedMethods: null,
-    contentTypes: null
+    contentTypes: null,
+    log: null
 };
 
 config.root = core.getInput('directory');
@@ -92,6 +93,8 @@ if (config.allowedMethods === null || config.allowedMethods.length == 0) {
 } else {
     config.allowedMethods = JSON.parse(config.allowedMethods);
 }
+
+config.log = core.getInput("log");
 
 const cp = require('child_process');
 const child = cp.fork(__filename, ['serve'], { detached: true, silent: true });

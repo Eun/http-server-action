@@ -26,8 +26,11 @@ jobs:
             {
               "md": "text/markdown"
             }
+          log: "log.txt"
       -
-        run: node .github/test-default.js
+        run: |
+          node .github/test-default.js
+          cat log.txt
 
   test-index-files:
     strategy:
@@ -49,8 +52,11 @@ jobs:
           no-cache: true
           index-files: |
             ["PULL_REQUEST_TEMPLATE.md"]
+          log: "log.txt"
       -
-        run: node .github/test-index-files.js
+        run: |
+          node .github/test-index-files.js
+          cat log.txt
 
   test-allowed-methods:
     strategy:
@@ -72,8 +78,11 @@ jobs:
           no-cache: true
           allowed-methods: |
             ["POST"]
+          log: "log.txt"
       -
-        run: node .github/test-allowed-methods.js
+        run: |
+          node .github/test-allowed-methods.js
+          cat log.txt
 
   # draft your next release notes as pull requests are merged into "master"
   # the configuration is at /.github/release-drafter.yml.
@@ -86,3 +95,30 @@ jobs:
           config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  test-logging:
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v3
+      -
+        uses: actions/setup-node@v3
+      -
+        name: Serve Files
+        uses: ./
+        with:
+          directory: ${{ github.workspace }}/.github
+          port: 9090
+          no-cache: true
+          allowed-methods: |
+            ["GET", "POST"]
+          log: "log.txt"
+      -
+        run: |
+          curl -vvvv http://localhost:9090/
+          curl --header "Content-Type: application/json" --request POST --data '[{"msg":"hello"},{"msg":"World"}]' http://localhost:9090/
+      - name: Show log
+        run: cat log.txt

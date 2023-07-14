@@ -5,6 +5,7 @@ const fs = require('fs');
 
 function deploy(config, ready) {
     const server = http.createServer();
+    const formatTime = Intl.DateTimeFormat('en-US', { hour: "2-digit", minute: "2-digit", second:"2-digit", hour12: false })
 
     if (config.root === undefined || config.root === null || config.root.length == 0) {
         config.root = process.cwd();
@@ -24,6 +25,9 @@ function deploy(config, ready) {
     if (config.contentTypes === undefined || config.contentTypes === null || config.contentTypes.length == 0) {
         config.contentTypes = {};
     }
+    if (config.log == undefined || config.log == null) {
+        config.log = "off";
+    }
 
     const root = path.resolve(path.normalize(config.root));
     let cwd = root;
@@ -34,8 +38,30 @@ function deploy(config, ready) {
     function toPosixPath(url) {
         return path.posix.join(...url.split(path.sep));
     }
+    
+    let writeLine = (line) => {
+        if (config.log !== "off") {
+            let txtLogger = fs.createWriteStream(config.log, {
+                flags: 'a'
+            });
+            
+            txtLogger.write(`\n${line}`);
+        }
+    };
 
     server.on('request', (request, response) => {
+        let now = formatTime.format(new Date());
+        let data = '';
+
+        request.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        request.on('end', () => {
+            writeLine(`[${now}] ${request.method} ${request.url} ${JSON.stringify(data)}`);
+        });
+
+
         if (config.noCache) {
             response.setHeader(
                 'Cache-Control',
@@ -84,7 +110,7 @@ function deploy(config, ready) {
             }
             const noIndexFound = config.indexFiles.every(elem => {
                 const indexFile = requestedFile + elem;
-                if(fs.existsSync(indexFile)){
+                if (fs.existsSync(indexFile)) {
                     requestedFile = indexFile;
                     stat = fs.statSync(requestedFile);
                     return false;
@@ -92,7 +118,7 @@ function deploy(config, ready) {
                 return true;
             });
 
-            if(noIndexFound) {
+            if (noIndexFound) {
                 response.writeHead(200, {
                     'Content-Type': 'text/html'
                 });

@@ -37,6 +37,8 @@ Default:
   "xml": "text/xml"
 }
 ```
+### `log`
+Create a log file with the given name (default is `off`) (*optional*)
 
 ## Example
 ```yaml
@@ -70,6 +72,9 @@ steps:
           "txt": "text/plain",
           "xml": "text/xml"
         }
+      log: "log.txt"
   -
-    run: curl -vvvv http://localhost:8080/index.html
+    run: |
+      curl -vvvv http://localhost:8080/index.html
+      cat log.txt
 ```
