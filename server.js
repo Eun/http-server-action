@@ -41,12 +41,7 @@ function deploy(config, ready) {
     
     let writeLine = (line) => {
         if (config.log != "off") {
-            let path = config.log;
-            // ensure .txt file extension is available
-            if (!path.endsWith(".txt")) {
-                path += ".txt";
-            }
-            let txtLogger = fs.createWriteStream(path, {
+            let txtLogger = fs.createWriteStream(config.log, {
                 flags: 'a'
             });
             
