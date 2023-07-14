@@ -26,6 +26,7 @@ jobs:
             {
               "md": "text/markdown"
             }
+          log: "log.txt"
       -
         run: |
           node .github/test-default.js
@@ -51,6 +52,7 @@ jobs:
           no-cache: true
           index-files: |
             ["PULL_REQUEST_TEMPLATE.md"]
+          log: "log.txt"
       -
         run: |
           node .github/test-index-files.js
@@ -76,6 +78,7 @@ jobs:
           no-cache: true
           allowed-methods: |
             ["POST"]
+          log: "log.txt"
       -
         run: |
           node .github/test-allowed-methods.js
