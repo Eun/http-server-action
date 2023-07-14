@@ -92,3 +92,30 @@ jobs:
           config-name: release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  test-logging:
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v3
+      -
+        uses: actions/setup-node@v3
+      -
+        name: Serve Files
+        uses: ./
+        with:
+          directory: ${{ github.workspace }}/.github
+          port: 9090
+          no-cache: true
+          allowed-methods: |
+            ["GET", "POST"]
+          log: "log.txt"
+      -
+        run: |
+          curl -vvvv http://localhost:9090/
+          curl --header "Content-Type: application/json" --request POST --data '[{"msg":"hello"},{"msg":"World"}]' http://localhost:9090/
+      - name: Show log
+        run: cat log.txt
