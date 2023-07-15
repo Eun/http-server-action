@@ -98,7 +98,7 @@ jobs:
           logTime: false
       -
         run: |
-          node .github/test-logging.js || true
+          node .github/test-logging.js
           ls -la .
           cat log.txt
 

@@ -12,7 +12,7 @@ const options = {
 
 const req = http.request(options, res => {
     const buf = fs.readFileSync('log.txt').toString();
-    const expect = `POST / "Hello World"\n`
+    const expect = `POST /\n`
     if (expect !== buf) {
         console.error(`expected ${expect}, but got ${buf}`);
         process.exit(1);
