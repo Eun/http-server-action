@@ -26,11 +26,8 @@ jobs:
             {
               "md": "text/markdown"
             }
-          log: "log.txt"
       -
-        run: |
-          node .github/test-default.js
-          cat log.txt
+        run: node .github/test-default.js
 
   test-index-files:
     strategy:
@@ -52,11 +49,8 @@ jobs:
           no-cache: true
           index-files: |
             ["PULL_REQUEST_TEMPLATE.md"]
-          log: "log.txt"
       -
-        run: |
-          node .github/test-index-files.js
-          cat log.txt
+        run: node .github/test-index-files.js
 
   test-allowed-methods:
     strategy:
@@ -78,23 +72,8 @@ jobs:
           no-cache: true
           allowed-methods: |
             ["POST"]
-          log: "log.txt"
       -
-        run: |
-          node .github/test-allowed-methods.js
-          cat log.txt
-
-  # draft your next release notes as pull requests are merged into "master"
-  # the configuration is at /.github/release-drafter.yml.
-  update_release_draft:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: release-drafter/release-drafter@v5
-        if: github.ref == 'refs/heads/master'
-        with:
-          config-name: release-drafter.yml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: node .github/test-allowed-methods.js
   test-logging:
     strategy:
       matrix:
@@ -116,9 +95,19 @@ jobs:
           allowed-methods: |
             ["GET", "POST"]
           log: "log.txt"
+          logTime: false
       -
-        run: |
-          curl -vvvv http://localhost:9090/
-          curl --header "Content-Type: application/json" --request POST --data '[{"msg":"hello"},{"msg":"World"}]' http://localhost:9090/
-      - name: Show log
-        run: cat log.txt
+        run: node .github/test-logging.js
+
+
+  # draft your next release notes as pull requests are merged into "master"
+  # the configuration is at /.github/release-drafter.yml.
+  update_release_draft:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: release-drafter/release-drafter@v5
+        if: github.ref == 'refs/heads/master'
+        with:
+          config-name: release-drafter.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
