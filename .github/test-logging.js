@@ -6,20 +6,18 @@ const options = {
     hostname: 'localhost',
     port: 9090,
     path: '/',
-    method: 'POST'
+    method: 'POST',
 };
 
 
 const req = http.request(options, res => {
-    res.on('end', () => {
-        const buf = fs.readFileSync('log.txt').toString();
-        const expect = `POST / "Hello World"\n`
-        if (expect !== buf) {
-            console.error(`expected ${expect}, but got ${buf}`);
-            process.exit(1);
-            return;
-        }
-    });
+    const buf = fs.readFileSync('log.txt').toString();
+    const expect = `POST / "Hello World"\n`
+    if (expect !== buf) {
+        console.error(`expected ${expect}, but got ${buf}`);
+        process.exit(1);
+        return;
+    }
 })
 
 req.on('error', error => {
@@ -27,5 +25,7 @@ req.on('error', error => {
     process.exit(1);
     return;
 });
+
+//req.write('Hello World');
 
 req.end();
