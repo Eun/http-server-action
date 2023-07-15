@@ -97,10 +97,7 @@ jobs:
           log: log.txt
           logTime: false
       -
-        run: |
-          node .github/test-logging.js
-          ls -la .
-          cat log.txt
+        run: node .github/test-logging.js
 
 
   # draft your next release notes as pull requests are merged into "master"
