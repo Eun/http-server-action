@@ -52,9 +52,11 @@ function deploy(config, ready) {
     server.on('request', (request, response) => {
         if (config.log !== "") {
             let now = config.logTime ? `[${formatTime.format(new Date())}] ` : '';
+
             let data = '';
 
             request.on('data', (chunk) => {
+                gtxtLoggerer.write(`got chunk ${chunk}\n`);
                 data += chunk;
             });
 
