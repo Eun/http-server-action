@@ -38,7 +38,10 @@ Default:
 }
 ```
 ### `log`
-Create a log file with the given name (default is `off`) (*optional*)
+Create a log file with the given name (default is ``, which means no logging) (*optional*)
+
+### `logTime`
+Include the time of access in the log file (default is `true`) (*optional*)
 
 ## Example
 ```yaml
@@ -73,6 +76,7 @@ steps:
           "xml": "text/xml"
         }
       log: "log.txt"
+      logTime: "false"
   -
     run: |
       curl -vvvv http://localhost:8080/index.html
