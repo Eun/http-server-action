@@ -66,7 +66,7 @@ function deploy(config, ready) {
                 response.setHeader(
                     'Cache-Control',
                     'no-cache, no-store, must-revalidate'
-                    );
+                );
             }
 
             if (!config.allowedMethods.includes(request.method)) {
@@ -103,7 +103,6 @@ function deploy(config, ready) {
             }
 
             let stat = fs.statSync(requestedFile);
-
             if (stat.isDirectory()) {
                 if (!requestedFile.endsWith(path.sep)) {
                     requestedFile += path.sep;
@@ -151,12 +150,11 @@ function deploy(config, ready) {
                 }
             }
 
-            const contentType = path.extname(requestedFile).slice(1);
-
             let headers = {
                 'Content-Length': stat.size,
             }
 
+            const contentType = path.extname(requestedFile).slice(1);
             if (config.contentTypes[contentType]) {
                 headers['Content-Type'] = config.contentTypes[contentType];
             }
