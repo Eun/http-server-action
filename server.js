@@ -52,7 +52,7 @@ function deploy(config, ready) {
     server.on('request', (request, response) => {
         if (config.log !== "") {
             let now = config.logTime ? `[${formatTime.format(new Date())}] ` : '';
-
+            txtLogger.write(`${now}${request.method} ${request.url}`)
             let data = '';
 
             request.on('data', (chunk) => {
