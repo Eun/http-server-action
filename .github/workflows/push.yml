@@ -94,10 +94,13 @@ jobs:
           no-cache: true
           allowed-methods: |
             ["GET", "POST"]
-          log: "log.txt"
+          log: log.txt
           logTime: false
       -
-        run: node .github/test-logging.js
+        run: |
+          node .github/test-logging.js
+          ls -la .
+          cat log.txt
 
 
   # draft your next release notes as pull requests are merged into "master"
