@@ -45,7 +45,7 @@ function deploy(config, ready) {
     let txtLogger = undefined;
     if (config.log !== "") {
         txtLogger = fs.createWriteStream(config.log, {
-            flags: 'a'
+            flags: 'as'
         });
     }
 
