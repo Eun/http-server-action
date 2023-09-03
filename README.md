@@ -48,7 +48,7 @@ Include the time of access in the log file (default is `true`) (*optional*)
 steps:
   -
     name: Checkout code
-    uses: actions/checkout@v2
+    uses: actions/checkout@v3
   -
     name: Serve Files
     uses: Eun/http-server-action@v1
