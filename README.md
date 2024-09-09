@@ -43,6 +43,9 @@ Create a log file with the given name (default is ``, which means no logging) (*
 ### `logTime`
 Include the time of access in the log file (default is `true`) (*optional*)
 
+### `custom404Page`
+Path of the custom 404 page shown is the requested page is not found
+
 ## Example
 ```yaml
 steps:
@@ -77,6 +80,7 @@ steps:
         }
       log: "log.txt"
       logTime: "false"
+      custom404Page: "/404.html"
   -
     run: |
       curl -vvvv http://localhost:8080/index.html
