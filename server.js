@@ -83,12 +83,7 @@ function deploy(config, ready) {
             if (requestedFile !== root) {
                 if (!requestedFile.startsWith(cwd) || !fs.existsSync(requestedFile)) {
                     if (!config.custom404Page) {
-                        const body = 'Not Found';
-                        response.writeHead(404, {
-                            'Content-Length': Buffer.byteLength(body),
-                            'Content-Type': 'text/plain'
-                        });
-                        response.end(body);
+                        server404DefaultPage(response);
                         return;
                     }
 
@@ -96,87 +91,98 @@ function deploy(config, ready) {
                     requestedFile = path.resolve(path.normalize(path.join(cwd, ...url.pathname.split(path.posix.sep))));
 
                     if (!requestedFile.startsWith(cwd) || !fs.existsSync(requestedFile)) {
-                        const body = 'Not Found';
-                        response.writeHead(404, {
-                            'Content-Length': Buffer.byteLength(body),
-                            'Content-Type': 'text/plain'
-                        });
-                        response.end(body);
+                        server404DefaultPage(response);
                         return;
                     }
-                }
-            }
 
-            let stat = fs.statSync(requestedFile);
-            if (stat.isDirectory()) {
-                if (!requestedFile.endsWith(path.sep)) {
-                    requestedFile += path.sep;
-                }
-                const noIndexFound = config.indexFiles.every(elem => {
-                    const indexFile = requestedFile + elem;
-                    if (fs.existsSync(indexFile)) {
-                        requestedFile = indexFile;
-                        stat = fs.statSync(requestedFile);
-                        return false;
-                    }
-                    return true;
-                });
-
-                if (noIndexFound) {
-                    response.writeHead(200, {
-                        'Content-Type': 'text/html'
-                    });
-
-                    if (request.method === 'HEAD') {
-                        response.end();
-                        return;
-                    }
-                    response.write('<pre>\n');
-
-                    let parentDir = path.resolve(path.normalize(path.join(requestedFile, '..')));
-                    if (!parentDir.endsWith(path.sep)) {
-                        parentDir += path.sep;
-                    }
-                    if (parentDir.startsWith(cwd)) {
-                        let parentLink = '/' + toPosixPath(parentDir.slice(cwd.length));
-                        if (parentLink === '/.') {
-                            parentLink = '/';
-                        }
-                        response.write(`<a href="${parentLink}">..</a>\n`);
-                    }
-
-                    for (const file of fs.readdirSync(requestedFile)) {
-                        const fullPath = requestedFile + file;
-                        response.write(`<a href="/${toPosixPath(fullPath.slice(cwd.length))}">${file}</a>\n`);
-                    }
-                    response.write('</pre>');
-                    response.end();
+                    serveRequestedFile(config, request, response, requestedFile, 404);
                     return;
                 }
             }
 
-            let headers = {
-                'Content-Length': stat.size,
-            }
-
-            const contentType = path.extname(requestedFile).slice(1);
-            if (config.contentTypes[contentType]) {
-                headers['Content-Type'] = config.contentTypes[contentType];
-            }
-            response.writeHead(200, headers);
-            if (request.method === 'HEAD') {
-                response.end();
-                return;
-            }
-
-            var readStream = fs.createReadStream(requestedFile);
-            readStream.pipe(response);
+            serveRequestedFile(config, request, response, requestedFile, 200);
         })
     });
 
     server.listen(config.port, () => {
         ready(server);
     });
+}
+
+function serveRequestedFile(config, request, response, requestedFile, statusCode) {
+    let stat = fs.statSync(requestedFile);
+    if (stat.isDirectory()) {
+        if (!requestedFile.endsWith(path.sep)) {
+            requestedFile += path.sep;
+        }
+        const noIndexFound = config.indexFiles.every(elem => {
+            const indexFile = requestedFile + elem;
+            if (fs.existsSync(indexFile)) {
+                requestedFile = indexFile;
+                stat = fs.statSync(requestedFile);
+                return false;
+            }
+            return true;
+        });
+
+        if (noIndexFound) {
+            response.writeHead(statusCode, {
+                'Content-Type': 'text/html'
+            });
+
+            if (request.method === 'HEAD') {
+                response.end();
+                return;
+            }
+            response.write('<pre>\n');
+
+            let parentDir = path.resolve(path.normalize(path.join(requestedFile, '..')));
+            if (!parentDir.endsWith(path.sep)) {
+                parentDir += path.sep;
+            }
+            if (parentDir.startsWith(cwd)) {
+                let parentLink = '/' + toPosixPath(parentDir.slice(cwd.length));
+                if (parentLink === '/.') {
+                    parentLink = '/';
+                }
+                response.write(`<a href="${parentLink}">..</a>\n`);
+            }
+
+            for (const file of fs.readdirSync(requestedFile)) {
+                const fullPath = requestedFile + file;
+                response.write(`<a href="/${toPosixPath(fullPath.slice(cwd.length))}">${file}</a>\n`);
+            }
+            response.write('</pre>');
+            response.end();
+            return;
+        }
+    }
+
+    let headers = {
+        'Content-Length': stat.size,
+    }
+
+    const contentType = path.extname(requestedFile).slice(1);
+    if (config.contentTypes[contentType]) {
+        headers['Content-Type'] = config.contentTypes[contentType];
+    }
+    response.writeHead(statusCode, headers);
+    if (request.method === 'HEAD') {
+        response.end();
+        return;
+    }
+
+    var readStream = fs.createReadStream(requestedFile);
+    readStream.pipe(response);
+}
+
+function server404DefaultPage(response) {
+    const body = 'Not Found';
+    response.writeHead(404, {
+        'Content-Length': Buffer.byteLength(body),
+        'Content-Type': 'text/plain'
+    });
+    response.end(body);
 }
 
 exports.deploy = deploy;
