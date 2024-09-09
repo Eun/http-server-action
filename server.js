@@ -78,27 +78,32 @@ function deploy(config, ready) {
                 response.end(body);
                 return;
             }
-            const url = new URL(request.url, `http://${request.headers.host}`);
+            let url = new URL(request.url, `http://${request.headers.host}`);
             let requestedFile = path.resolve(path.normalize(path.join(cwd, ...url.pathname.split(path.posix.sep))));
             if (requestedFile !== root) {
-                if (!requestedFile.startsWith(cwd)) {
-                    const body = 'Not Found';
-                    response.writeHead(404, {
-                        'Content-Length': Buffer.byteLength(body),
-                        'Content-Type': 'text/plain'
-                    });
-                    response.end(body);
-                    return;
-                }
+                if (!requestedFile.startsWith(cwd) || !fs.existsSync(requestedFile)) {
+                    if (!config.custom404Page) {
+                        const body = 'Not Found';
+                        response.writeHead(404, {
+                            'Content-Length': Buffer.byteLength(body),
+                            'Content-Type': 'text/plain'
+                        });
+                        response.end(body);
+                        return;
+                    }
 
-                if (!fs.existsSync(requestedFile)) {
-                    const body = 'Not Found';
-                    response.writeHead(404, {
-                        'Content-Length': Buffer.byteLength(body),
-                        'Content-Type': 'text/plain'
-                    });
-                    response.end(body);
-                    return;
+                    url = new URL(config.custom404Page, `http://${request.headers.host}`);
+                    requestedFile = path.resolve(path.normalize(path.join(cwd, ...url.pathname.split(path.posix.sep))));
+
+                    if (!requestedFile.startsWith(cwd) || !fs.existsSync(requestedFile)) {
+                        const body = 'Not Found';
+                        response.writeHead(404, {
+                            'Content-Length': Buffer.byteLength(body),
+                            'Content-Type': 'text/plain'
+                        });
+                        response.end(body);
+                        return;
+                    }
                 }
             }
 
