@@ -74,6 +74,27 @@ jobs:
       -
         run: node .github/test-custom-404.js
 
+  test-default-404:
+    strategy:
+      matrix:
+        os: [ macos-latest, ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      -
+        name: Checkout code
+        uses: actions/checkout@v4
+      -
+        uses: actions/setup-node@v4
+      -
+        name: Serve Files
+        uses: ./
+        with:
+          directory: ${{ github.workspace }}/.github
+          port: 9090
+          no-cache: true
+      -
+        run: node .github/test-default-404.js        
+
   test-allowed-methods:
     strategy:
       matrix:
