@@ -83,7 +83,7 @@ function deploy(config, ready) {
             if (requestedFile !== root) {
                 if (!requestedFile.startsWith(cwd) || !fs.existsSync(requestedFile)) {
                     if (!config.custom404Page) {
-                        server404DefaultPage(response);
+                        serve404DefaultPage(response);
                         return;
                     }
 
@@ -91,7 +91,7 @@ function deploy(config, ready) {
                     requestedFile = path.resolve(path.normalize(path.join(cwd, ...url.pathname.split(path.posix.sep))));
 
                     if (!requestedFile.startsWith(cwd) || !fs.existsSync(requestedFile)) {
-                        server404DefaultPage(response);
+                        serve404DefaultPage(response);
                         return;
                     }
 
@@ -176,7 +176,7 @@ function serveRequestedFile(config, request, response, requestedFile, statusCode
     readStream.pipe(response);
 }
 
-function server404DefaultPage(response) {
+function serve404DefaultPage(response) {
     const body = 'Not Found';
     response.writeHead(404, {
         'Content-Length': Buffer.byteLength(body),
