@@ -54,6 +54,10 @@ inputs:
     description: 'Whether to include the time of access in the log file or not'
     required: false
     default: true
+  custom404Page:
+    description: 'Path of the custom 404 page shown is the requested page is not found'
+    required: false
+    default: ''
 runs:
   using: 'node20'
   main: 'main.js'

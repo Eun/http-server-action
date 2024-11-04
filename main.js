@@ -34,7 +34,8 @@ let config = {
     allowedMethods: null,
     contentTypes: null,
     log: null,
-    logTime: null
+    logTime: null,
+    custom404Page: null
 };
 
 config.root = core.getInput('directory');
@@ -103,6 +104,8 @@ if (config.logTime === null || config.logTime.length == 0) {
 } else {
     config.logTime = config.logTime === 'true';
 }
+
+config.custom404Page = core.getInput("custom404Page");
 
 const cp = require('child_process');
 const child = cp.fork(__filename, ['serve'], { detached: true, silent: true });
