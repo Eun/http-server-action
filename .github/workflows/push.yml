@@ -93,7 +93,7 @@ jobs:
           port: 9090
           no-cache: true
       -
-        run: node .github/test-default-404.js        
+        run: node .github/test-default-404.js
 
   test-allowed-methods:
     strategy:
